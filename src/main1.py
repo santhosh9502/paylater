@@ -41,6 +41,10 @@ class TransactionCreate(BaseModel):
 
 @app.post("/newUser")
 async def new_user(user: UserCreate):
+    """
+        Description: Perform a transaction between a user and a merchant.
+        Returns: success/failed status
+    """
     response_msg = {
         "status" : "success",
         "data" : None,
@@ -67,6 +71,10 @@ async def new_user(user: UserCreate):
 
 @app.post("/newMerchant")
 def new_merchant(merchant: MerchantCreate):
+    """
+        Description: Perform a transaction between a user and a merchant.
+        Returns: success/failed status
+    """
     response_msg = {
         "status": "success",
         "data": None,
@@ -94,6 +102,10 @@ def new_merchant(merchant: MerchantCreate):
 
 @app.post("/transact")
 async def transact(transaction: TransactionCreate):
+    """
+        Description: Perform a transaction between a user and a merchant.
+        Returns: success/failed status
+    """
     response_msg = {
         "status": "success",
         "data": None,
@@ -104,15 +116,17 @@ async def transact(transaction: TransactionCreate):
         conn = create_connection()
         cursor = conn.cursor(buffered=True)
 
-        query = f"INSERT INTO transactions (u_id, m_id, amount) VALUES ({transaction.u_id}, {transaction.m_id}, {transaction.amount})"
-        cursor.execute(query)
-        conn.commit()
-
         query = f"SELECT balance FROM user WHERE user_id={transaction.u_id}"
         cursor.execute(query)
         balance = float(cursor.fetchone()[0])
 
+        # if user not having sufficent credit limit
         if balance >= transaction.amount:
+            # adding transaction to the Transaction table
+            query = f"INSERT INTO transactions (u_id, m_id, amount) VALUES ({transaction.u_id}, {transaction.m_id}, {transaction.amount})"
+            cursor.execute(query)
+            conn.commit()
+            # Updating user balance accordingly
             query = f"UPDATE user SET balance={balance - transaction.amount} WHERE user_id={transaction.u_id}"
             cursor.execute(query)
             conn.commit()
@@ -130,6 +144,10 @@ async def transact(transaction: TransactionCreate):
 
 @app.get("/getMerchant/{mid}")
 async def get_merchant(mid: int):
+    """
+        Description: Perform a transaction between a user and a merchant.
+        Returns: success/failed status
+    """
     response_msg = {
         "status": "success",
         "data": None,
@@ -158,6 +176,10 @@ async def get_merchant(mid: int):
 
 @app.post("/updateFee")
 async def update_fee(mid: int, fee: int):
+    """
+        Description: Perform a transaction between a user and a merchant.
+        Returns: success/failed status
+    """
     response_msg = {
         "status": "success",
         "data": None,
@@ -167,6 +189,7 @@ async def update_fee(mid: int, fee: int):
     try:
         conn = create_connection()
         cursor = conn.cursor()
+         # Updating merchant accordingly
         query = f"UPDATE merchant SET fee={fee} WHERE merchant_id={mid}"
         cursor.execute(query)
         conn.commit()
@@ -186,6 +209,10 @@ async def update_fee(mid: int, fee: int):
 
 @app.post("/repay")
 async def repay(name: str, amount: int):
+    """
+        Description: Perform a transaction between a user and a merchant.
+        Returns: success/failed status
+    """
     response_msg = {
         "status": "success",
         "data": None,
@@ -198,7 +225,7 @@ async def repay(name: str, amount: int):
         query = f"SELECT balance FROM user WHERE name='{name}'"
         cursor.execute(query)
         balance = float(cursor.fetchone()[0])
-
+        # here we are updating the balance and amount accordingly
         query = f"UPDATE user SET balance={balance + amount} WHERE name='{name}'"
         cursor.execute(query)
         conn.commit()
@@ -218,6 +245,12 @@ async def repay(name: str, amount: int):
 
 @app.get("/fee/{merchant}")
 async def get_merchant_fee(merchant: str):
+    """
+        Description: Perform a transaction between a user and a merchant.
+        Returns: success/failed status
+    """
+    
+    
     response_msg = {
         "status": "success",
         "data": None,
@@ -247,6 +280,10 @@ async def get_merchant_fee(merchant: str):
 
 @app.get("/dues/{user}")
 async def get_user_dues(user: str):
+    """
+        Description: Perform a transaction between a user and a merchant.
+        Returns: success/failed status
+    """
     response_msg = {
         "status": "success",
         "data": None,
@@ -277,6 +314,10 @@ async def get_user_dues(user: str):
 
 @app.get("/usersAtLimit")
 async def get_users_at_limit():
+    """
+        Description: Perform a transaction between a user and a merchant.
+        Returns: success/failed status
+    """
     response_msg = {
         "status": "success",
         "data": None,
@@ -307,6 +348,10 @@ async def get_users_at_limit():
 
 @app.get("/totalDues")
 async def get_total_dues():
+    """
+        Description: Perform a transaction between a user and a merchant.
+        Returns: success/failed status
+    """
     response_msg = {
         "status": "success",
         "data": None,
